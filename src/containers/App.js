@@ -4,36 +4,39 @@ import SearchBox from "../components/SearchBox";
 import Scroll from "../components/Scroll";
 import "./App.css";
 import { connect } from "react-redux";
-import { setSearchField } from "../action";
+import { setSearchField, requestRobots } from "../action";
 
 const mapStateToProps = (state) => {
   return {
-    searchField: state.searchField,
+    searchField: state.searchRobots.searchField,
+    robots: state.requestRobots.robots,
+    isPending: state.requestRobots.isPending,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     onSearchChange: (event) => dispatch(setSearchField(event.target.value)),
-    // onRequestRobots: () => dispatch(requestRobots()),
+    onRequestRobots: () => dispatch(requestRobots()),
   };
 };
 
 console.log(mapDispatchToProps());
 
 function App(props) {
-  const [robots, setRobots] = useState([]);
+  // const [robots, setRobots] = useState([]);
   const [count, setCount] = useState(0); // for demo purposes
 
   useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then((response) => response.json())
-      .then((users) => {
-        setRobots(users);
-      });
+    props.onRequestRobots();
+    // fetch("https://jsonplaceholder.typicode.com/users")
+    //   .then((response) => response.json())
+    //   .then((users) => {
+    //     setRobots(users);
+    //   });
   }, []);
 
-  const { searchField, onSearchChange } = props;
+  const { searchField, onSearchChange, robots } = props;
 
   const filteredRobots = robots.filter((robot) => {
     return robot.name.toLowerCase().includes(searchField.toLowerCase());
